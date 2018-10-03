@@ -32,7 +32,67 @@ public class GameManager : MonoBehaviour {
 
     }
 
+    public void CreateCube() {
 
+        Vector3[] vertices = {
+            new Vector3 (0, 0, 0),
+            new Vector3 (1, 0, 0),
+            new Vector3 (1, 1, 0),
+            new Vector3 (0, 1, 0),
+            new Vector3 (0, 1, 1),
+            new Vector3 (1, 1, 1),
+            new Vector3 (1, 0, 1),
+            new Vector3 (0, 0, 1),
+        };
+
+        int[] triangles = {
+            0, 2, 1, //face front
+			0, 3, 2,
+            2, 3, 4, //face top
+			2, 4, 5,
+            1, 2, 5, //face right
+			1, 5, 6,
+            0, 7, 4, //face left
+			0, 4, 3,
+            5, 4, 7, //face back
+			5, 7, 6,
+            0, 6, 7, //face bottom
+			0, 1, 6
+        };
+
+        Mesh mesh = GetComponent<MeshFilter>().mesh;
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.triangles = triangles;
+        //mesh.Optimize();
+        mesh.RecalculateNormals();
+    }
+
+    public void CreateCircle(int numOfPoints) {
+
+        float angleStep = 360.0f / (float)numOfPoints;
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        Quaternion quaternion = Quaternion.Euler(0.0f, 0.0f, angleStep);
+
+        // Make first triangle.
+        vertices.Add(new Vector3(0.0f, 0.0f, 0.0f));  // 1. Circle center.
+        vertices.Add(new Vector3(0.0f, 0.5f, 0.0f));  // 2. First vertex on circle outline (radius = 0.5f)
+        vertices.Add(quaternion * vertices[1]);     // 3. First vertex on circle outline rotated by angle)
+                                                        // Add triangle indices.
+        triangles.Add(0);
+        triangles.Add(1);
+        triangles.Add(2);
+        for (int i = 0; i < numOfPoints - 1; i++) {
+            triangles.Add(0);                      // Index of circle center.
+            triangles.Add(vertices.Count - 1);
+            triangles.Add(vertices.Count);
+            vertices.Add(quaternion * vertices[vertices.Count - 1]);
+        }
+        Mesh mesh = new Mesh();
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+    }
 
     public void CreateSquare(string name, Square square) {
         //Vector3[] vertices = new Vector3[4];
