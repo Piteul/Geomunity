@@ -10,13 +10,18 @@ public class GameManager : MonoBehaviour {
     // Use this for initialization
     void Start() {
 
-        //CreateTriangle("Triangle", new Triangle(0, 0, 0, 1, 1, 0));
-        //CreateTriangle("Triangle 1", new Triangle(0, 1, 1, 0, 1, 1));
+        //CreateTriangle("Triangle", new Triangle(new Vector3(0,0), new Vector3(0,1), new Vector3(1,0)));
+        //CreateTriangle("Triangle", new Triangle(new Vector3(0,1), new Vector3(1,0), new Vector3(1,1)));
 
-        CreateSquare("Square 1", new Square(new Triangle(0, 0, 0, 1, 1, 0), new Triangle(0, 1, 1, 0, 1, 1)));
+        //CreateSquare("Square 1", new Square(new Triangle(new Vector3(0, 0), new Vector3(0, 1), new Vector3(1, 0)), new Triangle(new Vector3(0, 1), new Vector3(1, 0), new Vector3(1, 1))));
+
+        //CreateCube("Cube");
 
 
+        for (int i = 0; i < 360; i++) {
+            CreateCircle(2, i);
 
+        }
     }
 
     // Update is called once per frame
@@ -24,15 +29,10 @@ public class GameManager : MonoBehaviour {
 
     }
 
-    public void CreateCube(string name, Square _square) {
 
-        Square square = _square;
-        //Square square2 = new Square(new Triangle(square.vertices[2].x, square.vertices[2].y, square.vertices[3].x, square.vertices[3].y, square.vertices[2].x))
+    //Create Functions
 
-
-    }
-
-    public void CreateCube() {
+    public void CreateCube(string name, int nb) {
 
         Vector3[] vertices = {
             new Vector3 (0, 0, 0),
@@ -60,15 +60,21 @@ public class GameManager : MonoBehaviour {
 			0, 1, 6
         };
 
-        Mesh mesh = GetComponent<MeshFilter>().mesh;
-        mesh.Clear();
+        Mesh mesh = new Mesh();
+        mesh.name = "Mesh";
+
         mesh.vertices = vertices;
         mesh.triangles = triangles;
-        //mesh.Optimize();
+
+        GameObject gameObject = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+        gameObject.transform.localScale = new Vector3(10, 10, 10);
+
+        gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        gameObject.GetComponent<MeshRenderer>().material = materialA;
         mesh.RecalculateNormals();
     }
 
-    public void CreateCircle(int numOfPoints) {
+    public void CreateCircle(int numOfPoints, int nb) {
 
         float angleStep = 360.0f / (float)numOfPoints;
         List<Vector3> vertices = new List<Vector3>();
@@ -79,19 +85,38 @@ public class GameManager : MonoBehaviour {
         vertices.Add(new Vector3(0.0f, 0.0f, 0.0f));  // 1. Circle center.
         vertices.Add(new Vector3(0.0f, 0.5f, 0.0f));  // 2. First vertex on circle outline (radius = 0.5f)
         vertices.Add(quaternion * vertices[1]);     // 3. First vertex on circle outline rotated by angle)
-                                                        // Add triangle indices.
+                                                    // Add triangle indices.
         triangles.Add(0);
         triangles.Add(1);
         triangles.Add(2);
+        triangles.Add(2);
+        triangles.Add(1);
+        triangles.Add(0);
         for (int i = 0; i < numOfPoints - 1; i++) {
             triangles.Add(0);                      // Index of circle center.
             triangles.Add(vertices.Count - 1);
             triangles.Add(vertices.Count);
+            triangles.Add(vertices.Count);
+            triangles.Add(vertices.Count - 1);
+            triangles.Add(0);
             vertices.Add(quaternion * vertices[vertices.Count - 1]);
         }
+
+
         Mesh mesh = new Mesh();
+        mesh.name = "Mesh";
+
         mesh.vertices = vertices.ToArray();
         mesh.triangles = triangles.ToArray();
+
+        GameObject gameObject = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
+        gameObject.transform.localScale = new Vector3(1, 1, 1);
+
+        gameObject.GetComponent<MeshFilter>().mesh = mesh;
+        gameObject.GetComponent<MeshRenderer>().material = materialA;
+
+        gameObject.transform.Rotate(new Vector3(0, nb, 0));
+
     }
 
     public void CreateSquare(string name, Square square) {
@@ -116,8 +141,6 @@ public class GameManager : MonoBehaviour {
         //triangles[4] = 1;
         //triangles[5] = 3;
 
-
-
         Mesh mesh = new Mesh();
         mesh.name = "Mesh";
 
@@ -129,8 +152,9 @@ public class GameManager : MonoBehaviour {
         gameObject.transform.localScale = new Vector3(1, 1, 1);
 
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
-        gameObject.GetComponent<MeshRenderer>().material = materialA;
+        gameObject.GetComponent<MeshRenderer>().material = materialB;
     }
+
 
     public void CreateTriangle(string name, Triangle _triangle) {
 
@@ -145,32 +169,44 @@ public class GameManager : MonoBehaviour {
         mesh.triangles = triangle.triangles.ToArray();
 
         GameObject gameObject = new GameObject(name, typeof(MeshFilter), typeof(MeshRenderer));
-        gameObject.transform.localScale = new Vector3(2, 2, 2);
+        gameObject.transform.localScale = new Vector3(1, 1, 1);
 
         gameObject.GetComponent<MeshFilter>().mesh = mesh;
         gameObject.GetComponent<MeshRenderer>().material = materialA;
     }
+
+
+
+
+    ////struct 
 
     public struct Triangle {
         public List<Vector3> vertices { get; set; }
         public List<Vector2> uv { get; set; }
         public List<int> triangles { get; set; }
 
-        public Triangle(int a, int b, int c, int d, int e, int f) {
+        public Triangle(Vector3 v1, Vector3 v2, Vector3 v3) {
 
             vertices = new List<Vector3>();
             uv = new List<Vector2>();
             triangles = new List<int>();
 
-            vertices.Add(new Vector3(a, b));
-            vertices.Add(new Vector3(c, d));
-            vertices.Add(new Vector3(e, f));
+            vertices.Add(v1);
+            vertices.Add(v2);
+            vertices.Add(v3);
 
-            uv.Add(new Vector3(a, b));
-            uv.Add(new Vector3(c, d));
-            uv.Add(new Vector3(e, f));
+            uv.Add(v1);
+            uv.Add(v2);
+            uv.Add(v3);
 
-
+            //recto
+            triangles.Add(0);
+            triangles.Add(1);
+            triangles.Add(2);
+            //verso
+            triangles.Add(2);
+            triangles.Add(1);
+            triangles.Add(0);
         }
     }
 
