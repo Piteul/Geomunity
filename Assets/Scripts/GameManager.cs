@@ -15,8 +15,7 @@ public class GameManager : MonoBehaviour {
 
         //CreateSquare("Square 1", new Square(new Triangle(new Vector3(0, 0), new Vector3(0, 1), new Vector3(1, 0)), new Triangle(new Vector3(0, 1), new Vector3(1, 0), new Vector3(1, 1))));
 
-        Tube();
-        //CreateCube("Cube");
+        CreateCube("Cube", 50);
 
 
         //for (int i = 0; i < 360; i++) {
