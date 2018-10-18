@@ -19,7 +19,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4772478718598770}
-  - component: {fileID: 114557823990680848}
+  - component: {fileID: 114484840081846056}
   - component: {fileID: 23667220865061288}
   - component: {fileID: 33242357847707604}
   m_Layer: 0
@@ -83,7 +83,7 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1143214016791536}
   m_Mesh: {fileID: 0}
---- !u!114 &114557823990680848
+--- !u!114 &114484840081846056
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
